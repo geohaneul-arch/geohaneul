@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>세계분쟁분석 2차 수행 · 공익 카드뉴스 제작</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@500;600;700&family=Gowun+Dodum&family=Gowun+Batang&family=Gaegu:wght@400;700&family=Nanum+Brush+Script&family=Poor+Story&family=Jua&family=Black+Han+Sans&family=Do+Hyeon&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1a2b;
+    --bg-elev:#15233a;
+    --bg-elev-2:#1b2c47;
+    --line:#2b3c58;
+    --line-soft:#22314a;
+    --text:#eef1f6;
+    --text-dim:#a9b8cf;
+    --text-faint:#6f8099;
+    --accent:#e8a94c;
+    --accent-dim:#c4903f;
+    --accent-soft:rgba(232,169,76,.13);
+    --danger:#d1495b;
+    --good:#6fae8c;
+    --good-soft:rgba(111,174,140,.14);
+    --font-serif:'Noto Serif KR', serif;
+    --font-sans:'Noto Sans KR', sans-serif;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-sans);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  ::selection{background:var(--accent-soft);color:var(--accent);}
+  a{color:var(--accent);}
+
+  .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+  .rail{background:var(--bg-elev);border-right:1px solid var(--line);padding:32px 22px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+  .rail-title{font-family:var(--font-serif);font-weight:700;font-size:17px;line-height:1.45;margin:0 0 4px;}
+  .rail-sub{font-size:12.5px;color:var(--text-faint);margin:0 0 26px;}
+  .steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px;}
+  .step-item{display:flex;align-items:flex-start;gap:11px;padding:9px 9px;border-radius:8px;color:var(--text-faint);cursor:pointer;transition:background .15s ease, color .15s ease;}
+  .step-item:hover{background:var(--bg-elev-2);}
+  .step-num{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600;color:var(--text-faint);margin-top:1px;}
+  .step-item.active{color:var(--text);}
+  .step-item.active .step-num{border-color:var(--accent);color:var(--accent);}
+  .step-item.done .step-num{background:var(--good-soft);border-color:var(--good);color:var(--good);}
+  .step-item.done{color:var(--text-dim);}
+  .step-label{font-size:13px;font-weight:500;padding-top:1px;}
+  .step-desc{font-size:11px;color:var(--text-faint);margin-top:1px;}
+
+  main{padding:56px 40px 60px;max-width:760px;}
+  .stage{display:none;}
+  .stage.active{display:block;animation:fade .35s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  h1.hero{font-family:var(--font-serif);font-weight:700;font-size:34px;line-height:1.3;margin:0 0 10px;}
+  .hero-school{font-size:14px;color:var(--accent);font-weight:600;margin:0 0 26px;letter-spacing:.2px;}
+  h2.stage-title{font-family:var(--font-serif);font-weight:700;font-size:24px;margin:0 0 8px;}
+  .stage-intro{color:var(--text-dim);font-size:14.5px;margin:0 0 26px;max-width:62ch;}
+
+  .panel{background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
+  .panel h3.panel-h{font-family:var(--font-serif);font-size:16px;margin:0 0 4px;}
+
+  label.field-label{display:block;font-size:13px;font-weight:600;color:var(--text-dim);margin-bottom:7px;}
+  input[type=text], textarea{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:11px 13px;font-family:var(--font-sans);font-size:14.5px;resize:vertical;}
+  input[type=text]:focus, textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+  textarea{min-height:64px;line-height:1.55;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;}
+  .field{margin-bottom:18px;}
+  .field:last-child{margin-bottom:0;}
+  .field-hint{font-size:12px;color:var(--text-faint);margin-top:6px;}
+
+  .org-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .org-card{background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px 16px;cursor:pointer;transition:border-color .15s ease, background .15s ease;}
+  .org-card:hover{border-color:var(--accent-dim);}
+  .org-card.selected{border-color:var(--accent);background:var(--accent-soft);}
+  .org-name{font-family:var(--font-serif);font-weight:700;font-size:16.5px;margin:0 0 2px;}
+  .org-full{font-size:12px;color:var(--text-faint);margin:0 0 10px;}
+  .org-activity{font-size:13px;color:var(--text-dim);margin:0;line-height:1.55;}
+  .org-check{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--accent);margin-top:10px;visibility:hidden;}
+  .org-card.selected .org-check{visibility:visible;}
+  .org-custom-input{margin-top:10px;font-size:13.5px;}
+
+  .sb-card{background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:16px;}
+  .sb-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:4px;}
+  .sb-title{font-family:var(--font-serif);font-weight:700;font-size:16px;}
+  .sb-desc{font-size:13px;color:var(--text-faint);margin:0 0 16px;}
+
+  /* ---- canvas editor ---- */
+  .canvas-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px;}
+  .tb-group{display:flex;align-items:center;gap:6px;background:var(--bg-elev);border:1px solid var(--line);border-radius:8px;padding:6px 10px;}
+  .tb-group label{font-size:12px;color:var(--text-dim);}
+  .tb-group input[type=color]{width:30px;height:26px;padding:0;border:1px solid var(--line);border-radius:5px;background:var(--bg);cursor:pointer;}
+  button.btn.small{padding:8px 14px;font-size:13px;}
+  button.btn.ghost{background:transparent;}
+
+  .shape-menu{position:relative;display:inline-block;}
+  .shape-menu-list{display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:30;background:var(--bg-elev-2);border:1px solid var(--line);border-radius:8px;padding:6px;flex-direction:column;min-width:120px;gap:2px;}
+  .sticker-menu-list.show{display:grid !important;grid-template-columns:repeat(4,1fr);gap:4px;min-width:160px;max-height:220px;overflow-y:auto;}
+  .sticker-menu-list button{padding:8px;text-align:center;font-size:20px;line-height:1;}
+  .shape-menu-list.show{display:flex;}
+  .shape-menu-list button{background:transparent;border:none;color:var(--text);text-align:left;padding:8px 10px;border-radius:6px;font-size:13px;cursor:pointer;font-family:var(--font-sans);}
+  .shape-menu-list button:hover{background:var(--bg-elev);}
+
+  .canvas-wrap{overflow-x:auto;padding:4px;margin-bottom:14px;}
+  .canvas-stage{width:480px;height:480px;background:#ffffff;position:relative;overflow:hidden;border-radius:6px;border:1px solid var(--line);touch-action:none;}
+  .canvas-el{position:absolute;cursor:move;user-select:none;}
+  .canvas-el.selected{outline:2px solid var(--accent);outline-offset:2px;}
+  .resize-handle{position:absolute;width:11px;height:11px;background:var(--accent);border:2px solid #0f1a2b;border-radius:3px;display:none;z-index:5;}
+  .canvas-el.selected .resize-handle{display:block;}
+  .canvas-el.el-text{min-width:40px;min-height:20px;padding:2px;line-height:1.3;outline:none;white-space:pre-wrap;word-break:break-word;}
+  .canvas-el.el-text.selected{outline:2px solid #ff4d4f !important;outline-offset:3px;box-shadow:0 0 0 3px rgba(255,77,79,0.18);}
+  .canvas-el.el-image img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;}
+  .shape-rect{border-radius:4px;}
+  .shape-circle{border-radius:50%;}
+  .shape-triangle{clip-path:polygon(50% 0%, 0% 100%, 100% 100%);}
+  .shape-star{clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);}
+
+  .el-controls{background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px;display:none;}
+  .el-controls.show{display:block;}
+  .el-controls .ec-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .el-controls label{font-size:12.5px;color:var(--text-dim);}
+  .el-controls input[type=range]{width:130px;}
+  .el-controls input[type=color]{width:30px;height:26px;padding:0;border:1px solid var(--line);border-radius:5px;background:var(--bg);}
+
+
+  .checkbox-row{display:flex;align-items:flex-start;gap:10px;background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin-top:8px;}
+  .checkbox-row span{font-size:13.5px;color:var(--text-dim);}
+
+  .nav-buttons{display:flex;justify-content:space-between;max-width:760px;margin-top:36px;padding-top:22px;border-top:1px solid var(--line);}
+  button.btn{font-family:var(--font-sans);font-size:14px;font-weight:600;padding:11px 22px;border-radius:8px;border:1px solid var(--line);background:var(--bg-elev-2);color:var(--text);cursor:pointer;transition:border-color .15s ease, background .15s ease;}
+  button.btn:hover{border-color:var(--text-faint);}
+  button.btn.primary{background:var(--accent);border-color:var(--accent);color:#1a1305;}
+  button.btn.primary:hover{background:var(--accent-dim);}
+  button.btn:disabled{opacity:.4;cursor:not-allowed;}
+
+  .save-note{font-size:11.5px;color:var(--text-faint);display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap;}
+  .save-dot{width:6px;height:6px;border-radius:50%;background:var(--good);}
+  .clear-all-btn{background:transparent;border:none;color:var(--text-faint);font-size:11.5px;text-decoration:underline;cursor:pointer;font-family:var(--font-sans);padding:0;}
+  .clear-all-btn:hover{color:var(--danger);}
+
+  .submit-box{background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
+  .submit-box h3{font-family:var(--font-serif);font-size:15.5px;margin:0 0 10px;}
+  .submit-box ol{margin:0;padding-left:20px;font-size:13.5px;color:var(--text-dim);}
+  .submit-box ol li{margin-bottom:6px;}
+  .submit-box ol li:last-child{margin-bottom:0;}
+  .path-tag{display:inline-block;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;color:var(--accent);margin:2px 0;}
+
+  .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+  .summary-cell{background:var(--bg-elev);border:1px solid var(--line);border-radius:8px;padding:14px 16px;}
+  .summary-cell .k{font-size:11.5px;color:var(--text-faint);margin-bottom:3px;}
+  .summary-cell .v{font-size:14px;font-weight:600;}
+
+  .preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+  .preview-cell{background:var(--bg-elev);border:1px solid var(--line);border-radius:8px;padding:12px;}
+  .preview-cell .pc-title{font-size:11.5px;color:var(--text-faint);margin:0 0 8px;}
+  .preview-cell img{width:100%;aspect-ratio:1/1;object-fit:contain;border-radius:6px;border:1px solid var(--line-soft);background:#fff;}
+  .preview-cell .pc-empty{aspect-ratio:1/1;border:1px dashed var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11.5px;color:var(--text-faint);}
+
+  #print-sheet{display:none;width:794px;background:#fff;color:#111;font-family:var(--font-sans);padding:36px 42px;box-sizing:border-box;}
+  #print-sheet.capturing{display:block;position:fixed;left:-10000px;top:0;z-index:-1;}
+  #print-sheet h1{font-family:var(--font-serif);font-size:20px;margin:0 0 2px;}
+  #print-sheet .ps-school{font-size:12px;color:#555;margin:0 0 14px;}
+  #print-sheet .ps-meta{display:flex;gap:20px;font-size:12px;margin-bottom:14px;border-bottom:1px solid #ccc;padding-bottom:12px;flex-wrap:wrap;}
+  #print-sheet .ps-meta div b{display:block;font-size:10px;color:#777;font-weight:500;margin-bottom:2px;}
+  #print-sheet .ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  #print-sheet .ps-reflection{margin-top:14px;padding-top:12px;border-top:1px solid #ccc;}
+  #print-sheet .ps-reflection-title{font-size:10.5px;color:#888;font-weight:600;margin:0 0 5px;}
+  #print-sheet .ps-reflection-text{font-size:10.5px;color:#222;margin:0;line-height:1.6;}
+  #print-sheet .ps-page{border:1px solid #ddd;border-radius:6px;padding:10px;}
+  #print-sheet .ps-page .ps-page-title{font-size:10.5px;color:#888;margin:0 0 5px;font-weight:600;}
+  #print-sheet .ps-page .ps-slogan{font-weight:700;font-size:12.5px;margin:0 0 5px;}
+  #print-sheet .ps-page .ps-sentence{font-size:11px;color:#333;margin:0 0 6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  #print-sheet .ps-page img{width:100%;aspect-ratio:1/1;object-fit:contain;border-radius:4px;border:1px solid #eee;background:#fff;}
+  #print-sheet .ps-page .ps-noimg{aspect-ratio:1/1;border:1px dashed #ccc;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10.5px;color:#999;}
+
+  @media (max-width:860px){
+    .app{grid-template-columns:1fr;}
+    .rail{position:relative;height:auto;display:flex;align-items:center;gap:16px;padding:16px 18px;overflow-x:auto;}
+    .rail-title,.rail-sub{display:none;}
+    .steps{flex-direction:row;gap:4px;}
+    .step-item{flex-direction:column;align-items:center;text-align:center;padding:6px 6px;min-width:58px;}
+    .step-desc{display:none;}
+    .step-label{font-size:10.5px;}
+    main{padding:32px 20px 50px;}
+    h1.hero{font-size:26px;}
+    .field-row, .org-grid, .summary-grid, .preview-grid{grid-template-columns:1fr;}
+    .nav-buttons{max-width:none;}
+  }
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <nav class="rail">
+    <p class="rail-title">세계분쟁분석<br>2차 수행</p>
+    <p class="rail-sub">공익 카드뉴스 제작 · 신목고등학교</p>
+    <ul class="steps" id="stepNav">
+      <li class="step-item" data-goto="0"><span class="step-num">1</span><div><div class="step-label">시작하기</div><div class="step-desc">학번·이름·분쟁·기구</div></div></li>
+      <li class="step-item" data-goto="1"><span class="step-num">2</span><div><div class="step-label">스토리보드</div><div class="step-desc">카드뉴스 4장 기획</div></div></li>
+      <li class="step-item" data-goto="2"><span class="step-num">3</span><div><div class="step-label">1페이지 제작</div><div class="step-desc">표지</div></div></li>
+      <li class="step-item" data-goto="3"><span class="step-num">4</span><div><div class="step-label">2페이지 제작</div><div class="step-desc">분쟁 설명</div></div></li>
+      <li class="step-item" data-goto="4"><span class="step-num">5</span><div><div class="step-label">3페이지 제작</div><div class="step-desc">근황·피해</div></div></li>
+      <li class="step-item" data-goto="5"><span class="step-num">6</span><div><div class="step-label">4페이지 제작</div><div class="step-desc">관심 촉구</div></div></li>
+      <li class="step-item" data-goto="6"><span class="step-num">7</span><div><div class="step-label">비판적 성찰</div><div class="step-desc">한계와 개입의 한계</div></div></li>
+      <li class="step-item" data-goto="7"><span class="step-num">8</span><div><div class="step-label">제출</div><div class="step-desc">PDF 저장</div></div></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- STEP 0 -->
+    <section class="stage" data-step="0">
+      <p class="hero-school">세계분쟁분석 2차 수행 · 신목고등학교</p>
+      <h1 class="hero">분쟁을 알리는 카드뉴스 만들기</h1>
+      <p class="stage-intro">1차 활동에서 조사한 분쟁을 바탕으로, 이번에는 국제기구·국제NGO의 홍보 담당자가 되어 공익 카드뉴스 4장을 기획하고 제작합니다.</p>
+      <div class="panel">
+        <ol style="margin:0;padding-left:20px;color:var(--text-dim);font-size:13.5px;line-height:1.9;">
+          <li>내가 다룰 분쟁과 소속(학번·이름), 홍보 담당자가 될 단체를 정합니다.</li>
+          <li>카드뉴스 4장의 슬로건과 핵심문장을 기획합니다 (스토리보드).</li>
+          <li>이 페이지 안에서 배경색·텍스트·사진·도형으로 1~4페이지를 직접 만듭니다.</li>
+          <li>완성된 스토리보드와 카드뉴스가 담긴 PDF를 저장해 제출합니다.</li>
+        </ol>
+      </div>
+      <div class="panel" style="border-color:var(--accent-dim);">
+        <p style="margin:0 0 10px;font-size:13.5px;font-weight:700;color:var(--accent);">꼭 확인하세요 — 평가 요소</p>
+        <ul style="margin:0;padding-left:20px;color:var(--text-dim);font-size:13.5px;line-height:1.9;">
+          <li>카드뉴스 4장 중 <b style="color:var(--text)">최소 한 장 이상</b>에 분쟁과 관련된 사진이 들어가야 합니다.</li>
+          <li>내가 고른 기구의 <b style="color:var(--text)">공식 로고를 인터넷에서 직접 찾아</b> 카드뉴스에 넣어야 점수를 받을 수 있습니다. (로고가 없으면 해당 점수를 받을 수 없습니다.)</li>
+          <li>비판적 성찰은 <b style="color:var(--text)">200자 이상</b> 작성해야 만점입니다.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3 class="panel-h">기구 로고, 이렇게 찾아서 넣으세요</h3>
+        <ol style="margin:0;padding-left:20px;color:var(--text-dim);font-size:13.5px;line-height:1.9;">
+          <li>검색창에 <b style="color:var(--text)">기구 이름 + 로고</b>를 검색합니다. (예: <span class="path-tag">UNICEF 로고</span>, <span class="path-tag">국경없는의사회 로고</span>)</li>
+          <li>가능하면 해당 기구 <b style="color:var(--text)">공식 홈페이지</b>의 로고, 배경이 투명한 PNG 파일을 고릅니다.</li>
+          <li>이미지 위에서 오른쪽 클릭 → <b style="color:var(--text)">이미지를 다른 이름으로 저장</b>으로 내 컴퓨터에 저장합니다.</li>
+          <li>카드뉴스 제작 화면의 <b style="color:var(--text)">＋ 사진</b> 버튼으로 저장한 로고 파일을 불러옵니다.</li>
+          <li>로고를 드래그해 위치를 옮기고, 모서리를 끌어 크기를 조절합니다.</li>
+        </ol>
+        <p class="field-hint" style="margin:12px 0 0;">로고는 기구의 상표이므로 색이나 모양을 임의로 바꾸지 말고 원래 형태 그대로 사용하세요. 이 카드뉴스는 수업용 비영리 학습 제작물입니다.</p>
+      </div>
+      <div class="panel">
+        <div class="field-row">
+          <div class="field" style="margin-bottom:0;"><label class="field-label">학번</label><input type="text" id="studentId" placeholder="예: 10203"></div>
+          <div class="field" style="margin-bottom:0;"><label class="field-label">이름</label><input type="text" id="studentName" placeholder="예: 홍길동"></div>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label class="field-label">1차 활동에서 다룬 분쟁</label>
+          <input type="text" id="conflictTopic" placeholder="예: 시리아 내전, 수단 내전, 미얀마 내전 등">
+          <p class="field-hint">1차 세계분쟁 탐구 활동지에서 조사했던 분쟁 지역·주제를 그대로 적으세요.</p>
+        </div>
+      </div>
+      <div class="panel">
+        <h3 class="panel-h">어떤 단체의 홍보 담당자가 될까요?</h3>
+        <p class="field-hint" style="margin:0 0 16px;">내가 다룬 분쟁을 가장 잘 해결할 수 있는 국제기구·국제NGO를 하나 고르세요.</p>
+        <div class="org-grid" id="orgGrid"></div>
+      </div>
+    </section>
+
+    <!-- STEP 1 -->
+    <section class="stage" data-step="1">
+      <h2 class="stage-title">카드뉴스 스토리보드 기획</h2>
+      <p class="stage-intro">4장으로 구성된 카드뉴스를 기획합니다. 각 페이지마다 짧은 <b style="color:var(--text)">슬로건</b>(제목처럼 쓸 한 줄)과 <b style="color:var(--text)">핵심문장</b>(내용을 담은 문장 1개)을 적으세요.</p>
+      <div id="sbContainer"></div>
+    </section>
+
+    <!-- STEP 6 : 비판적 성찰 -->
+    <section class="stage" data-step="6">
+      <h2 class="stage-title">비판적 성찰</h2>
+      <p class="stage-intro">카드뉴스를 다 만들었으니, 한 걸음 물러나서 생각해볼 질문에 답해보세요.</p>
+      <div class="panel">
+        <p style="margin:0 0 10px;font-size:13.5px;font-weight:600;color:var(--text);">다음 질문을 참고해서 답변을 작성하세요.</p>
+        <ul style="margin:0 0 16px;padding-left:20px;color:var(--text-dim);font-size:13.5px;line-height:1.8;">
+          <li>내가 고른 기구의 활동만으로는 이 분쟁이 해결되지 않는 이유는 무엇인가요?</li>
+          <li>국제사회의 개입에는 어떤 한계가 있을까요?</li>
+        </ul>
+        <label class="field-label">나의 답변</label>
+        <p class="field-hint" style="margin:0 0 8px;">※ 이 칸은 붙여넣기(Ctrl+V)가 막혀 있습니다. 직접 작성하세요.</p>
+        <textarea id="reflectionText" maxlength="400" style="min-height:190px;" placeholder="위 질문을 참고해 자신의 생각을 직접 작성하세요."></textarea>
+        <p class="field-hint" id="reflectionCounter" style="margin-top:8px;">0자 (띄어쓰기 포함 최소 200자, 최대 400자로 작성하세요 — 200자 이상 작성해야 만점입니다)</p>
+        <p class="field-hint" id="pasteWarn" style="margin-top:6px;color:var(--danger);display:none;">붙여넣기는 사용할 수 없어요. 직접 작성해 주세요.</p>
+      </div>
+    </section>
+
+    <!-- STEP 7 -->
+    <section class="stage" data-step="7">
+      <h2 class="stage-title">제출하기</h2>
+      <p class="stage-intro">아래 내용을 확인한 뒤 PDF로 저장하고 제출하세요. 스토리보드·4장의 카드뉴스·비판적 성찰이 한 장의 PDF로 함께 저장됩니다.</p>
+      <div class="summary-grid">
+        <div class="summary-cell"><div class="k">학번 · 이름</div><div class="v" id="sumStudent">-</div></div>
+        <div class="summary-cell"><div class="k">선택한 기구</div><div class="v" id="sumOrg">-</div></div>
+      </div>
+      <div class="panel">
+        <p class="field-label" style="margin-bottom:12px;">카드뉴스 미리보기</p>
+        <div class="preview-grid" id="finalPreviewGrid"></div>
+      </div>
+      <div class="panel">
+        <p class="field-label" style="margin-bottom:8px;">비판적 성찰</p>
+        <p style="font-size:13.5px;color:var(--text-dim);margin:0;line-height:1.6;" id="sumReflection">-</p>
+      </div>
+      <div class="submit-box">
+        <h3>제출 안내</h3>
+        <ol>
+          <li>아래 버튼으로 <b style="color:var(--text)">스토리보드+카드뉴스 PDF</b>를 저장하세요 (파일 하나로 저장됩니다).</li>
+          <li>제출 위치: <a href="https://shinmok.riroschool.kr" target="_blank" rel="noopener">신목 리로스쿨(shinmok.riroschool.kr)</a> → <span class="path-tag">활동보고서 &gt; 사회</span> 반별 게시물에 PDF로 첨부</li>
+        </ol>
+      </div>
+      <button class="btn primary" id="printBtn" style="margin-bottom:10px;">스토리보드+카드뉴스 PDF로 저장</button>
+      <p class="field-hint" id="printHint">버튼을 누르면 PDF 파일이 한 장으로 바로 다운로드됩니다.</p>
+    </section>
+
+    <div class="nav-buttons">
+      <button class="btn ghost" id="prevBtn">이전</button>
+      <button class="btn primary" id="nextBtn">다음</button>
+    </div>
+    <p class="save-note">
+      <span class="save-dot"></span> 입력한 내용은 이 브라우저에 자동 저장됩니다.
+      <button type="button" class="clear-all-btn" id="clearAllBtn">이전 기록 지우고 새로 시작하기</button>
+    </p>
+  </main>
+</div>
+
+<div id="print-sheet">
+  <h1>세계분쟁분석 2차 수행 · 카드뉴스</h1>
+  <p class="ps-school">신목고등학교 · 통합사회A</p>
+  <div class="ps-meta">
+    <div><b>학번</b><span id="psId"></span></div>
+    <div><b>이름</b><span id="psName"></span></div>
+    <div><b>다룬 분쟁</b><span id="psConflict"></span></div>
+    <div><b>선택한 기구</b><span id="psOrg"></span></div>
+  </div>
+  <div class="ps-grid" id="psGrid"></div>
+  <div class="ps-reflection">
+    <p class="ps-reflection-title">비판적 성찰 — 기구의 한계, 국제사회 개입의 한계</p>
+    <p class="ps-reflection-text" id="psReflection"></p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function(){
+  var ORGS = [
+    {id:'unicef', name:'유니세프', full:'유엔아동기금 · UNICEF', activity:'분쟁 지역 아동에게 식수·예방접종·심리 지원을 제공하고, 소년병 동원을 막고 재활을 돕습니다. 피난 중인 아동도 교육을 이어가도록 지원합니다.'},
+    {id:'unesco', name:'유네스코', full:'유엔교육과학문화기구 · UNESCO', activity:'전쟁으로 파괴된 문화유산과 유적을 복구·보호하고, 중단된 교육 시스템 재건을 돕습니다. 평화 교육 캠페인도 함께 벌입니다.'},
+    {id:'unhcr', name:'유엔난민기구', full:'UNHCR', activity:'분쟁으로 삶터를 잃은 난민과 국내실향민을 보호하고 임시 거주지를 지원합니다. 난민 지위 인정과 제3국 재정착도 돕습니다.'},
+    {id:'wfp', name:'세계식량계획', full:'WFP', activity:'분쟁 지역에서 식량이 끊긴 주민에게 긴급 식량과 영양 지원을 전달하고, 물류가 막힌 지역까지 구호물자를 공수합니다.'},
+    {id:'msf', name:'국경없는의사회', full:'MSF', activity:'전쟁터와 분쟁 지역에서 부상자와 환자를 무상으로 치료하고, 의료 인프라가 무너진 곳에 이동병원을 운영합니다.'},
+    {id:'amnesty', name:'국제앰네스티', full:'Amnesty International', activity:'분쟁 중 벌어지는 인권 침해와 전쟁범죄를 조사해 국제사회에 알리고, 정치범 석방 캠페인과 인권 실태 보고서 발간 활동을 합니다.'},
+    {id:'icrc', name:'국제적십자위원회', full:'ICRC', activity:'전쟁 당사자들이 국제인도법(전쟁법)을 지키도록 감시하고, 전쟁포로를 방문하며 실종자 가족 찾기와 부상병 구호를 담당합니다.'},
+    {id:'etc', name:'기타 (직접 입력)', full:'학생이 직접 정하는 단체', activity:'위 목록에 없는 실제 단체이거나, 내가 새로 구상한 단체여도 좋아요. 이름을 직접 적어보세요.'}
+  ];
+
+  var PAGES = [
+    {key:'p1', title:'1페이지 · 표지', desc:'다룬 분쟁과 선택한 기구를 한눈에 보여주는 표지입니다.'},
+    {key:'p2', title:'2페이지 · 분쟁 설명', desc:'이 분쟁이 무엇이고 왜 일어났는지 설명합니다.'},
+    {key:'p3', title:'3페이지 · 최근 근황 · 피해', desc:'최근 상황이나 분쟁으로 인한 피해를 전합니다.'},
+    {key:'p4', title:'4페이지 · 관심 촉구', desc:'관심을 촉구하는 문구와 기구가 할 법한 활동을 홍보합니다.'}
+  ];
+
+  var STICKERS = [
+    {emoji:'✏️', label:'연필'},
+    {emoji:'📎', label:'클립'},
+    {emoji:'📌', label:'압정'},
+    {emoji:'🔍', label:'돋보기'},
+    {emoji:'🌍', label:'지구본'},
+    {emoji:'❤️', label:'하트'},
+    {emoji:'❗', label:'느낌표'},
+    {emoji:'💬', label:'말풍선'},
+    {emoji:'📢', label:'확성기'},
+    {emoji:'🕊️', label:'비둘기(평화)'},
+    {emoji:'✨', label:'반짝임'},
+    {emoji:'🤝', label:'악수'},
+    {emoji:'📚', label:'책'},
+    {emoji:'🏫', label:'학교'},
+    {emoji:'🏥', label:'병원'},
+    {emoji:'🩹', label:'밴드'},
+    {emoji:'🚑', label:'구급차'},
+    {emoji:'🛡️', label:'방패'},
+    {emoji:'🕯️', label:'촛불'},
+    {emoji:'🌱', label:'새싹'},
+    {emoji:'🌈', label:'무지개'},
+    {emoji:'🎗️', label:'리본'},
+    {emoji:'🏠', label:'집'},
+    {emoji:'💧', label:'물방울'}
+  ];
+
+  var STORAGE_KEY = 'conflict-cardnews-v3';
+  function blankCanvas(){ return {bg:'#ffffff', elements:[]}; }
+  function applyCanvasBackground(key){
+    var stage = document.getElementById('canvas-'+key);
+    if(!stage) return;
+    stage.style.backgroundColor = state[key].canvas.bg;
+    stage.style.backgroundImage = 'none';
+  }
+  var state = {
+    studentId:'', studentName:'', conflictTopic:'', org:'', orgCustom:'', reflection:'',
+    p1:{slogan:'',sentence:'',image:'',canvas:blankCanvas()},
+    p2:{slogan:'',sentence:'',image:'',canvas:blankCanvas()},
+    p3:{slogan:'',sentence:'',image:'',canvas:blankCanvas()},
+    p4:{slogan:'',sentence:'',image:'',canvas:blankCanvas()}
+  };
+  var current = 0;
+  var TOTAL_STEPS = 8;
+  var STEP_PAGE_MAP = {2:'p1', 3:'p2', 4:'p3', 5:'p4'};
+  var selectedElement = {};
+  var elIdSeq = 1;
+  function nextElId(){ return 'el'+(elIdSeq++); }
+
+  function loadState(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        for(var k in parsed){
+          if(parsed[k] && typeof parsed[k]==='object' && !Array.isArray(parsed[k]) && state[k]){
+            for(var kk in parsed[k]){ state[k][kk]=parsed[k][kk]; }
+          } else { state[k]=parsed[k]; }
+        }
+        ['p1','p2','p3','p4'].forEach(function(pk){
+          if(!state[pk].canvas) state[pk].canvas = blankCanvas();
+          if(!state[pk].canvas.elements) state[pk].canvas.elements = [];
+        });
+      }
+    }catch(e){}
+  }
+  function saveState(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch(e){ /* 저장 공간 부족 시 조용히 무시 */ }
+  }
+
+  // ---------- org grid ----------
+  var orgGrid = document.getElementById('orgGrid');
+  ORGS.forEach(function(org){
+    var card = document.createElement('div');
+    card.className = 'org-card';
+    card.dataset.orgId = org.id;
+    var html = '<p class="org-name">'+org.name+'</p><p class="org-full">'+org.full+'</p><p class="org-activity">'+org.activity+'</p>';
+    if(org.id === 'etc'){
+      html += '<input type="text" class="org-custom-input" id="orgCustomInput" placeholder="예: 세이브더칠드런, 우리 반이 만든 가상 단체 등">';
+    }
+    html += '<div class="org-check">✓ 선택됨</div>';
+    card.innerHTML = html;
+    card.addEventListener('click', function(e){
+      state.org = org.id;
+      renderOrgSelection();
+      saveState();
+      if(org.id === 'etc'){
+        var inp = document.getElementById('orgCustomInput');
+        if(inp && e.target !== inp) inp.focus();
+      }
+    });
+    orgGrid.appendChild(card);
+  });
+  var orgCustomInput = document.getElementById('orgCustomInput');
+  if(orgCustomInput){
+    orgCustomInput.addEventListener('input', function(){
+      state.orgCustom = orgCustomInput.value;
+      state.org = 'etc';
+      renderOrgSelection();
+      saveState();
+    });
+  }
+  function renderOrgSelection(){
+    Array.prototype.forEach.call(orgGrid.children, function(card){ card.classList.toggle('selected', card.dataset.orgId === state.org); });
+  }
+  function orgById(id){ for(var i=0;i<ORGS.length;i++){ if(ORGS[i].id===id) return ORGS[i]; } return null; }
+  function orgDisplayName(){
+    if(state.org === 'etc'){ return state.orgCustom.trim() ? state.orgCustom.trim() : '(단체명 미입력)'; }
+    var org = orgById(state.org);
+    return org ? org.name : '-';
+  }
+
+  // ---------- storyboard ----------
+  var sbContainer = document.getElementById('sbContainer');
+  PAGES.forEach(function(page){
+    var card = document.createElement('div');
+    card.className = 'sb-card';
+    var isCover = page.key === 'p1';
+    var html = '<div class="sb-head"><span class="sb-title">'+page.title+'</span></div><p class="sb-desc">'+page.desc+'</p>'+
+      '<div class="field" style="margin-bottom:'+(isCover?'0':'18px')+';"><label class="field-label">슬로건</label><input type="text" data-page="'+page.key+'" data-field="slogan" placeholder="짧은 제목형 문구를 적어보세요"></div>';
+    if(!isCover){
+      html += '<div class="field" style="margin-bottom:0;"><label class="field-label">핵심문장</label><textarea data-page="'+page.key+'" data-field="sentence" placeholder="이 장에 담을 내용을 한 문장으로 적어보세요"></textarea></div>';
+    }
+    card.innerHTML = html;
+    sbContainer.appendChild(card);
+  });
+  sbContainer.addEventListener('input', function(e){
+    var t = e.target;
+    if(t.dataset && t.dataset.page){ state[t.dataset.page][t.dataset.field] = t.value; saveState(); }
+  });
+
+  ['studentId','studentName','conflictTopic'].forEach(function(id){
+    var el = document.getElementById(id);
+    el.addEventListener('input', function(){ state[id] = el.value; saveState(); });
+  });
+
+  // ---------- reflection (비판적 성찰) ----------
+  var reflectionEl = document.getElementById('reflectionText');
+  var reflectionCounterEl = document.getElementById('reflectionCounter');
+  function renderReflectionCounter(){
+    var len = state.reflection.length;
+    var status = len < 200 ? '(최소 200자 이상 써야 만점입니다)' : '(좋아요, 조건을 충족했어요)';
+    reflectionCounterEl.textContent = len + '자 / 최소 200자 · 최대 400자 ' + status;
+    reflectionCounterEl.style.color = len < 200 ? 'var(--danger)' : 'var(--good)';
+  }
+  reflectionEl.addEventListener('input', function(){
+    if(reflectionEl.value.length > 400){ reflectionEl.value = reflectionEl.value.slice(0, 400); }
+    state.reflection = reflectionEl.value;
+    saveState();
+    renderReflectionCounter();
+  });
+
+  // ---------- 성찰 칸 붙여넣기 차단 ----------
+  var pasteWarnEl = document.getElementById('pasteWarn');
+  var pasteWarnTimer = null;
+  function showPasteWarn(){
+    if(!pasteWarnEl) return;
+    pasteWarnEl.style.display = 'block';
+    if(pasteWarnTimer) clearTimeout(pasteWarnTimer);
+    pasteWarnTimer = setTimeout(function(){ pasteWarnEl.style.display = 'none'; }, 3000);
+  }
+  reflectionEl.addEventListener('paste', function(e){ e.preventDefault(); showPasteWarn(); });
+  reflectionEl.addEventListener('drop', function(e){ e.preventDefault(); showPasteWarn(); });
+  reflectionEl.addEventListener('dragover', function(e){ e.preventDefault(); });
+  reflectionEl.addEventListener('keydown', function(e){
+    var key = (e.key || '').toLowerCase();
+    if(((e.ctrlKey || e.metaKey) && key === 'v') || (e.shiftKey && e.key === 'Insert')){
+      e.preventDefault();
+      showPasteWarn();
+    }
+  });
+  reflectionEl.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+
+  // ---------- image resize helper ----------
+  function resizeImageFile(file, maxWidth, quality, cb){
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var img = new Image();
+      img.onload = function(){
+        var scale = Math.min(1, maxWidth / img.width);
+        var w = Math.max(1, Math.round(img.width * scale));
+        var h = Math.max(1, Math.round(img.height * scale));
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        cb(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ---------- card-news editor steps (index 2~5) ----------
+  var stageAnchor = document.querySelector('.stage[data-step="1"]');
+  PAGES.forEach(function(page, i){
+    var stepIndex = i + 2;
+    var key = page.key;
+    var section = document.createElement('section');
+    section.className = 'stage';
+    section.dataset.step = stepIndex;
+    section.innerHTML =
+      '<h2 class="stage-title">카드뉴스 제작 · '+page.title+'</h2>'+
+      '<p class="stage-intro">앞서 기획한 내용을 참고해서 아래 캔버스에 배경색·텍스트·사진·도형으로 이 페이지를 직접 만들어보세요.</p>'+
+      '<div class="panel" style="border-color:var(--accent-dim);padding:12px 14px;margin-bottom:14px;"><p style="margin:0;font-size:13px;color:var(--text-dim);"><b style="color:var(--accent);">평가 요소</b> — 내가 고른 기구의 <b style="color:var(--text)">공식 로고를 인터넷에서 찾아</b> <b style="color:var(--text)">＋ 사진</b> 버튼으로 카드뉴스에 넣어야 점수를 받을 수 있습니다.</p></div>'+
+      '<div class="panel" id="recap-'+key+'"></div>'+
+      '<div class="canvas-toolbar">'+
+        '<div class="tb-group"><label>배경색</label><input type="color" id="bg-'+key+'" value="#ffffff"></div>'+
+
+        '<button class="btn small" id="addtext-'+key+'">＋ 텍스트</button>'+
+        '<button class="btn small" id="addimg-'+key+'">＋ 사진</button>'+
+        '<input type="file" accept="image/*" id="imgfile-'+key+'" style="display:none;">'+
+        '<div class="shape-menu">'+
+          '<button class="btn small" id="shapebtn-'+key+'">＋ 도형</button>'+
+          '<div class="shape-menu-list" id="shapelist-'+key+'">'+
+            '<button data-shape="rect">사각형</button>'+
+            '<button data-shape="circle">원</button>'+
+            '<button data-shape="triangle">삼각형</button>'+
+            '<button data-shape="star">별</button>'+
+          '</div>'+
+        '</div>'+
+        '<div class="shape-menu">'+
+          '<button class="btn small" id="stickerbtn-'+key+'">＋ 스티커</button>'+
+          '<div class="shape-menu-list sticker-menu-list" id="stickerlist-'+key+'"></div>'+
+        '</div>'+
+        '<button class="btn small ghost" id="reset-'+key+'">초기화</button>'+
+      '</div>'+
+      '<div class="canvas-wrap"><div class="canvas-stage" id="canvas-'+key+'"></div></div>'+
+      '<div class="el-controls" id="elControls-'+key+'"></div>'+
+      '<p class="field-hint" style="margin-bottom:20px;">요소를 클릭해 선택한 뒤 모서리·옆면을 드래그하면 크기를 자유롭게 바꿀 수 있어요(텍스트는 좌우로 너비 조절). 드래그로 위치도 옮길 수 있고, 텍스트는 더블클릭하면 내용을 고칠 수 있어요.</p>';
+    stageAnchor.insertAdjacentElement('afterend', section);
+    stageAnchor = section;
+
+    document.getElementById('bg-'+key).addEventListener('input', function(e){
+      state[key].canvas.bg = e.target.value;
+      applyCanvasBackground(key);
+      saveState();
+    });
+    document.getElementById('addtext-'+key).addEventListener('click', function(){ addTextElement(key); });
+    document.getElementById('addimg-'+key).addEventListener('click', function(){ document.getElementById('imgfile-'+key).click(); });
+    document.getElementById('imgfile-'+key).addEventListener('change', function(e){
+      var file = e.target.files && e.target.files[0];
+      if(!file) return;
+      resizeImageFile(file, 800, 0.85, function(dataUrl){ addImageElement(key, dataUrl); });
+      e.target.value = '';
+    });
+    var shapeBtn = document.getElementById('shapebtn-'+key);
+    var shapeList = document.getElementById('shapelist-'+key);
+    shapeBtn.addEventListener('click', function(ev){ ev.stopPropagation(); shapeList.classList.toggle('show'); });
+    document.addEventListener('click', function(){ shapeList.classList.remove('show'); });
+    Array.prototype.forEach.call(shapeList.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){ addShapeElement(key, b.dataset.shape); shapeList.classList.remove('show'); });
+    });
+
+    var stickerBtn = document.getElementById('stickerbtn-'+key);
+    var stickerList = document.getElementById('stickerlist-'+key);
+    STICKERS.forEach(function(s){
+      var b = document.createElement('button');
+      b.textContent = s.emoji;
+      b.title = s.label;
+      b.style.fontSize = '20px';
+      b.addEventListener('click', function(){ addStickerElement(key, s.emoji); stickerList.classList.remove('show'); });
+      stickerList.appendChild(b);
+    });
+    stickerBtn.addEventListener('click', function(ev){ ev.stopPropagation(); stickerList.classList.toggle('show'); });
+    document.addEventListener('click', function(){ stickerList.classList.remove('show'); });
+    document.getElementById('reset-'+key).addEventListener('click', function(){
+      if(!confirm('이 페이지의 모든 요소를 지울까요?')) return;
+      state[key].canvas = blankCanvas();
+      saveState();
+      document.getElementById('bg-'+key).value = '#ffffff';
+      renderCanvasElements(key);
+      hideElControls(key);
+    });
+    document.getElementById('canvas-'+key).addEventListener('pointerdown', function(ev){
+      if(ev.target === this){ hideElControls(key); }
+    });
+  });
+
+  function addTextElement(key){
+    var el = {id:nextElId(), type:'text', x:150, y:220, w:200, fontSize:22, color:'#111111', fontFamily:'Noto Sans KR', bold:false, text:'텍스트를 입력하세요'};
+    state[key].canvas.elements.push(el);
+    saveState();
+    renderCanvasElements(key);
+    selectElementUI(key, el.id);
+  }
+  function addStickerElement(key, emoji){
+    var el = {id:nextElId(), type:'sticker', emoji:emoji, x:200, y:200, w:70, h:70};
+    state[key].canvas.elements.push(el);
+    saveState();
+    renderCanvasElements(key);
+    selectElementUI(key, el.id);
+  }
+  function addShapeElement(key, shape){
+    var el = {id:nextElId(), type:'shape', shape:shape, x:190, y:190, w:100, h:100, color:'#e8a94c'};
+    state[key].canvas.elements.push(el);
+    saveState();
+    renderCanvasElements(key);
+    selectElementUI(key, el.id);
+  }
+  function addImageElement(key, dataUrl){
+    var el = {id:nextElId(), type:'image', x:140, y:140, w:200, h:200, src:dataUrl};
+    state[key].canvas.elements.push(el);
+    saveState();
+    renderCanvasElements(key);
+    selectElementUI(key, el.id);
+  }
+  function findElement(key, elId){
+    var arr = state[key].canvas.elements;
+    for(var i=0;i<arr.length;i++){ if(arr[i].id===elId) return arr[i]; }
+    return null;
+  }
+  function deleteElement(key, elId){
+    var arr = state[key].canvas.elements;
+    var idx = -1;
+    for(var i=0;i<arr.length;i++){ if(arr[i].id===elId){ idx=i; break; } }
+    if(idx>-1) arr.splice(idx,1);
+    saveState();
+    renderCanvasElements(key);
+    hideElControls(key);
+  }
+
+  function attachDrag(key, div, el){
+    div.addEventListener('pointerdown', function(ev){
+      if(div.isContentEditable) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      var startX = ev.clientX, startY = ev.clientY;
+      var origX = el.x, origY = el.y;
+      try{ div.setPointerCapture(ev.pointerId); }catch(e){}
+      function onMove(ev2){
+        var dx = ev2.clientX - startX, dy = ev2.clientY - startY;
+        var maxX = Math.max(0, 480 - (el.w || 60));
+        var maxY = Math.max(0, 480 - (el.h || (el.fontSize ? el.fontSize*1.6 : 30)));
+        el.x = Math.max(0, Math.min(maxX, origX + dx));
+        el.y = Math.max(0, Math.min(maxY, origY + dy));
+        div.style.left = el.x+'px';
+        div.style.top = el.y+'px';
+      }
+      function onUp(){
+        div.removeEventListener('pointermove', onMove);
+        div.removeEventListener('pointerup', onUp);
+        saveState();
+      }
+      div.addEventListener('pointermove', onMove);
+      div.addEventListener('pointerup', onUp);
+    });
+  }
+
+  var RESIZE_HANDLES = [
+    {id:'nw', cursor:'nwse-resize', hx:0, hy:0},
+    {id:'n',  cursor:'ns-resize',   hx:0.5, hy:0},
+    {id:'ne', cursor:'nesw-resize', hx:1, hy:0},
+    {id:'e',  cursor:'ew-resize',   hx:1, hy:0.5},
+    {id:'se', cursor:'nwse-resize', hx:1, hy:1},
+    {id:'s',  cursor:'ns-resize',   hx:0.5, hy:1},
+    {id:'sw', cursor:'nesw-resize', hx:0, hy:1},
+    {id:'w',  cursor:'ew-resize',   hx:0, hy:0.5}
+  ];
+  var MIN_SIZE = 20;
+  var MIN_TEXT_WIDTH = 40;
+
+  function attachTextResizeHandles(key, div, el){
+    [{hx:0, cursor:'ew-resize'}, {hx:1, cursor:'ew-resize'}].forEach(function(h){
+      var handle = document.createElement('div');
+      handle.className = 'resize-handle';
+      handle.style.left = (h.hx*100)+'%';
+      handle.style.top = '50%';
+      handle.style.transform = 'translate(-50%,-50%)';
+      handle.style.cursor = h.cursor;
+      handle.addEventListener('pointerdown', function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        var startX = ev.clientX;
+        var origX = el.x, origW = el.w;
+        try{ handle.setPointerCapture(ev.pointerId); }catch(e){}
+        function onMove(ev2){
+          var dx = ev2.clientX - startX;
+          var newX = origX, newW = origW;
+          if(h.hx===0){ newW = origW - dx; newX = origX + dx; }
+          else { newW = origW + dx; }
+          if(newW < MIN_TEXT_WIDTH){ if(h.hx===0){ newX = origX + origW - MIN_TEXT_WIDTH; } newW = MIN_TEXT_WIDTH; }
+          newX = Math.max(0, newX);
+          if(newX + newW > 480){ newW = 480 - newX; }
+          el.x = newX; el.w = newW;
+          div.style.left = newX+'px';
+          div.style.width = newW+'px';
+        }
+        function onUp(){
+          handle.removeEventListener('pointermove', onMove);
+          handle.removeEventListener('pointerup', onUp);
+          saveState();
+        }
+        handle.addEventListener('pointermove', onMove);
+        handle.addEventListener('pointerup', onUp);
+      });
+      div.appendChild(handle);
+    });
+  }
+
+  function attachResizeHandles(key, div, el){
+    RESIZE_HANDLES.forEach(function(h){
+      var handle = document.createElement('div');
+      handle.className = 'resize-handle';
+      handle.style.left = (h.hx*100)+'%';
+      handle.style.top = (h.hy*100)+'%';
+      handle.style.transform = 'translate(-50%,-50%)';
+      handle.style.cursor = h.cursor;
+      handle.addEventListener('pointerdown', function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        var startX = ev.clientX, startY = ev.clientY;
+        var origX = el.x, origY = el.y, origW = el.w, origH = el.h;
+        try{ handle.setPointerCapture(ev.pointerId); }catch(e){}
+        function onMove(ev2){
+          var dx = ev2.clientX - startX, dy = ev2.clientY - startY;
+          var newX = origX, newY = origY, newW = origW, newH = origH;
+          if(h.hx===0){ newW = origW - dx; newX = origX + dx; }
+          else if(h.hx===1){ newW = origW + dx; }
+          if(h.hy===0){ newH = origH - dy; newY = origY + dy; }
+          else if(h.hy===1){ newH = origH + dy; }
+          if(newW < MIN_SIZE){ if(h.hx===0){ newX = origX + origW - MIN_SIZE; } newW = MIN_SIZE; }
+          if(newH < MIN_SIZE){ if(h.hy===0){ newY = origY + origH - MIN_SIZE; } newH = MIN_SIZE; }
+          newX = Math.max(0, newX);
+          newY = Math.max(0, newY);
+          if(newX + newW > 480){ newW = 480 - newX; }
+          if(newY + newH > 480){ newH = 480 - newY; }
+          el.x = newX; el.y = newY; el.w = newW; el.h = newH;
+          div.style.left = newX+'px';
+          div.style.top = newY+'px';
+          div.style.width = newW+'px';
+          div.style.height = newH+'px';
+          if(el.type === 'sticker'){ div.style.fontSize = (Math.min(newW, newH) * 0.75)+'px'; }
+        }
+        function onUp(){
+          handle.removeEventListener('pointermove', onMove);
+          handle.removeEventListener('pointerup', onUp);
+          saveState();
+        }
+        handle.addEventListener('pointermove', onMove);
+        handle.addEventListener('pointerup', onUp);
+      });
+      div.appendChild(handle);
+    });
+  }
+
+  function renderCanvasElements(key){
+    var stage = document.getElementById('canvas-'+key);
+    applyCanvasBackground(key);
+    stage.innerHTML = '';
+    state[key].canvas.elements.forEach(function(el){
+      var div = document.createElement('div');
+      div.className = 'canvas-el el-'+el.type;
+      div.dataset.id = el.id;
+      div.style.left = el.x+'px';
+      div.style.top = el.y+'px';
+      if(el.type==='text'){
+        div.style.width = el.w+'px';
+        div.style.fontSize = el.fontSize+'px';
+        div.style.color = el.color;
+        div.style.fontFamily = "'"+(el.fontFamily||'Noto Sans KR')+"', sans-serif";
+        div.style.fontWeight = el.bold ? '700' : '400';
+        div.textContent = el.text;
+        div.addEventListener('dblclick', function(ev){
+          ev.stopPropagation();
+          div.contentEditable = 'true';
+          div.focus();
+        });
+        div.addEventListener('blur', function(){
+          div.contentEditable = 'false';
+          el.text = div.textContent;
+          saveState();
+        });
+        attachTextResizeHandles(key, div, el);
+      } else if(el.type==='image'){
+        div.style.width = el.w+'px'; div.style.height = el.h+'px';
+        var img = document.createElement('img');
+        img.src = el.src;
+        div.appendChild(img);
+        attachResizeHandles(key, div, el);
+      } else if(el.type==='shape'){
+        div.style.width = el.w+'px'; div.style.height = el.h+'px';
+        div.style.background = el.color;
+        div.classList.add('shape-'+el.shape);
+        attachResizeHandles(key, div, el);
+      } else if(el.type==='sticker'){
+        div.style.width = el.w+'px'; div.style.height = el.h+'px';
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+        div.style.justifyContent = 'center';
+        div.style.fontSize = (Math.min(el.w, el.h) * 0.75)+'px';
+        div.style.lineHeight = '1';
+        div.textContent = el.emoji;
+        attachResizeHandles(key, div, el);
+      }
+      attachDrag(key, div, el);
+      div.addEventListener('pointerdown', function(){ selectElementUI(key, el.id); });
+      stage.appendChild(div);
+    });
+    updateSelectionOutline(key);
+  }
+
+  function selectElementUI(key, elId){
+    selectedElement[key] = elId;
+    updateSelectionOutline(key);
+    showElControls(key);
+  }
+  function updateSelectionOutline(key){
+    var stage = document.getElementById('canvas-'+key);
+    Array.prototype.forEach.call(stage.children, function(div){
+      div.classList.toggle('selected', div.dataset.id === selectedElement[key]);
+    });
+  }
+  function hideElControls(key){
+    selectedElement[key] = null;
+    var panel = document.getElementById('elControls-'+key);
+    if(panel) panel.classList.remove('show');
+    updateSelectionOutline(key);
+  }
+  function showElControls(key){
+    var elId = selectedElement[key];
+    var el = findElement(key, elId);
+    var panel = document.getElementById('elControls-'+key);
+    if(!el){ panel.classList.remove('show'); return; }
+    panel.classList.add('show');
+    var FONT_OPTIONS = [
+      {v:'Noto Sans KR', l:'고딕 (Noto Sans)'},
+      {v:'Noto Serif KR', l:'명조 (Noto Serif)'},
+      {v:'Gowun Dodum', l:'고운돋움'},
+      {v:'Gowun Batang', l:'고운바탕'},
+      {v:'Gaegu', l:'개구체'},
+      {v:'Nanum Brush Script', l:'나눔손글씨 붓'},
+      {v:'Poor Story', l:'푸어스토리'},
+      {v:'Jua', l:'주아체'},
+      {v:'Black Han Sans', l:'블랙 한 산스'},
+      {v:'Do Hyeon', l:'도현체'}
+    ];
+    var html = '<div class="ec-row">';
+    if(el.type==='text'){
+      var curFont = el.fontFamily || 'Noto Sans KR';
+      var fontSelectHtml = '<select data-ctl="fontFamily" style="font-family:\''+curFont+'\',sans-serif;padding:4px 6px;border-radius:5px;border:1px solid var(--line);background:var(--bg);color:var(--text);">';
+      FONT_OPTIONS.forEach(function(f){
+        fontSelectHtml += '<option value="'+f.v+'" style="font-family:\''+f.v+'\',sans-serif;" '+(f.v===curFont ? 'selected' : '')+'>'+f.l+'</option>';
+      });
+      fontSelectHtml += '</select>';
+      html += '<label>글꼴</label>'+fontSelectHtml+
+        '<label>글자 크기</label><input type="range" min="12" max="64" value="'+el.fontSize+'" data-ctl="fontSize">'+
+        '<label>글자색</label><input type="color" value="'+el.color+'" data-ctl="color">'+
+        '</div><div class="ec-row" style="margin-top:10px;">'+
+        '<label>가로 크기</label><input type="range" min="'+MIN_TEXT_WIDTH+'" max="480" value="'+el.w+'" data-ctl="width">'+
+        '<button class="btn small'+(el.bold ? '' : ' ghost')+'" data-ctl="bold" style="font-weight:800;'+(el.bold ? 'background:var(--accent);border-color:var(--accent);color:#1a1305;' : '')+'">B</button>'+
+        '<button class="btn small ghost" data-ctl="delete">삭제</button></div>'+
+        '<p class="field-hint" style="margin:8px 0 0;">텍스트 상자 좌우 끝을 드래그해도 너비를 조절할 수 있어요. 더블클릭하면 내용을 수정할 수 있어요.</p>';
+    } else if(el.type==='shape'){
+      html += '<label>색상</label><input type="color" value="'+el.color+'" data-ctl="color">'+
+        '<label>가로 크기</label><input type="range" min="20" max="480" value="'+el.w+'" data-ctl="width">'+
+        '<label>세로 크기</label><input type="range" min="20" max="480" value="'+el.h+'" data-ctl="height">'+
+        '<button class="btn small ghost" data-ctl="delete">삭제</button></div>';
+    } else if(el.type==='image'){
+      html += '<label>크기</label><input type="range" min="40" max="480" value="'+el.w+'" data-ctl="size">'+
+        '<button class="btn small ghost" data-ctl="delete">삭제</button></div>';
+    } else if(el.type==='sticker'){
+      html += '<label>크기</label><input type="range" min="24" max="300" value="'+el.w+'" data-ctl="size">'+
+        '<button class="btn small ghost" data-ctl="delete">삭제</button></div>';
+    }
+    panel.innerHTML = html;
+    Array.prototype.forEach.call(panel.querySelectorAll('[data-ctl]'), function(input){
+      var ctl = input.dataset.ctl;
+      if(ctl==='delete'){ input.addEventListener('click', function(){ deleteElement(key, el.id); }); return; }
+      if(ctl==='bold'){
+        input.addEventListener('click', function(){
+          el.bold = !el.bold;
+          saveState();
+          renderCanvasElements(key);
+          selectedElement[key] = el.id;
+          updateSelectionOutline(key);
+          showElControls(key);
+        });
+        return;
+      }
+      var handleCtlChange = function(){
+        if(ctl==='fontSize'){ el.fontSize = +input.value; }
+        else if(ctl==='fontFamily'){ el.fontFamily = input.value; }
+        else if(ctl==='color'){ el.color = input.value; }
+        else if(ctl==='width'){ el.w = +input.value; }
+        else if(ctl==='height'){ el.h = +input.value; }
+        else if(ctl==='size'){
+          if(el.type==='shape' || el.type==='sticker'){ el.w = +input.value; el.h = +input.value; }
+          else { var ratio = el.h && el.w ? el.h/el.w : 1; el.w = +input.value; el.h = Math.round(el.w*ratio); }
+        }
+        saveState();
+        renderCanvasElements(key);
+        selectedElement[key] = el.id;
+        updateSelectionOutline(key);
+      };
+      input.addEventListener('input', handleCtlChange);
+      if(input.tagName === 'SELECT'){ input.addEventListener('change', handleCtlChange); }
+    });
+  }
+
+  function renderPageRecap(key){
+    var el = document.getElementById('recap-'+key);
+    if(!el) return;
+    var d = state[key];
+    var html = '<p class="field-label" style="margin-bottom:10px;">내가 기획한 내용</p>';
+    if(key === 'p1'){
+      html += '<p style="font-size:13px;color:var(--text-dim);margin:0 0 10px;">분쟁 · <b style="color:var(--text);">'+(state.conflictTopic || '-')+'</b>　기구 · <b style="color:var(--text);">'+(state.org ? orgDisplayName() : '-')+'</b></p>';
+    }
+    html += '<p style="font-weight:700;font-size:15.5px;margin:0'+(key==='p1' ? '' : ' 0 6px 0')+';">'+(d.slogan || '(슬로건 미입력)')+'</p>';
+    if(key !== 'p1'){ html += '<p style="font-size:13.5px;color:var(--text-dim);margin:0;">'+(d.sentence || '(핵심문장 미입력)')+'</p>'; }
+    el.innerHTML = html;
+  }
+
+  // ---------- capture canvas to image ----------
+  function captureCanvas(key){
+    var stage = document.getElementById('canvas-'+key);
+    if(typeof html2canvas === 'undefined' || !stage){ return Promise.resolve(false); }
+    return html2canvas(stage, {backgroundColor:null, scale:1.5}).then(function(canvasEl){
+      state[key].image = canvasEl.toDataURL('image/jpeg', 0.85);
+      saveState();
+      return true;
+    }).catch(function(){ return false; });
+  }
+
+  // ---------- submit step ----------
+  function renderSubmitSummary(){
+    document.getElementById('sumStudent').textContent = (state.studentId || '-') + ' · ' + (state.studentName || '-');
+    document.getElementById('sumOrg').textContent = state.org ? orgDisplayName() : '-';
+    document.getElementById('sumReflection').textContent = state.reflection.trim() || '(아직 작성하지 않았어요)';
+    var grid = document.getElementById('finalPreviewGrid');
+    grid.innerHTML = '';
+    PAGES.forEach(function(page){
+      var cell = document.createElement('div');
+      cell.className = 'preview-cell';
+      var img = state[page.key].image;
+      cell.innerHTML = '<p class="pc-title">'+page.title+'</p>' + (img ? '<img src="'+img+'" alt="'+page.title+'">' : '<div class="pc-empty">아직 만들지 않았어요</div>');
+      grid.appendChild(cell);
+    });
+  }
+  function buildPrintSheet(){
+    document.getElementById('psId').textContent = state.studentId || '-';
+    document.getElementById('psName').textContent = state.studentName || '-';
+    document.getElementById('psConflict').textContent = state.conflictTopic || '-';
+    document.getElementById('psOrg').textContent = state.org ? orgDisplayName() : '-';
+    document.getElementById('psReflection').textContent = state.reflection.trim() || '(작성되지 않음)';
+    var grid = document.getElementById('psGrid');
+    grid.innerHTML = '';
+    PAGES.forEach(function(page){
+      var d = state[page.key];
+      var div = document.createElement('div');
+      div.className = 'ps-page';
+      var html = '<p class="ps-page-title">'+page.title+'</p><p class="ps-slogan">'+(d.slogan || '(슬로건 미입력)')+'</p>';
+      if(page.key !== 'p1'){ html += '<p class="ps-sentence">'+(d.sentence || '(핵심문장 미입력)')+'</p>'; }
+      html += d.image ? '<img src="'+d.image+'" alt="'+page.title+'">' : '<div class="ps-noimg">이미지 없음</div>';
+      div.innerHTML = html;
+      grid.appendChild(div);
+    });
+  }
+  document.getElementById('printBtn').addEventListener('click', function(){
+    if(typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined'){
+      alert('PDF 생성 도구를 불러오지 못했습니다. 인터넷 연결을 확인한 뒤 다시 시도해주세요.');
+      return;
+    }
+    buildPrintSheet();
+    var btn = this;
+    var hint = document.getElementById('printHint');
+    var originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'PDF 만드는 중...';
+    var sheet = document.getElementById('print-sheet');
+    sheet.classList.add('capturing');
+    html2canvas(sheet, {backgroundColor:'#ffffff', scale:2}).then(function(canvasEl){
+      sheet.classList.remove('capturing');
+      var imgData = canvasEl.toDataURL('image/jpeg', 0.92);
+      var doc = new window.jspdf.jsPDF({unit:'pt', format:'a4'});
+      var pageWidth = doc.internal.pageSize.getWidth();
+      var pageHeight = doc.internal.pageSize.getHeight();
+      var pdfWidth = pageWidth;
+      var pdfHeight = (canvasEl.height * pdfWidth) / canvasEl.width;
+      if(pdfHeight > pageHeight){
+        pdfHeight = pageHeight;
+        pdfWidth = (canvasEl.width * pdfHeight) / canvasEl.height;
+      }
+      var xOffset = (pageWidth - pdfWidth) / 2;
+      doc.addImage(imgData, 'JPEG', xOffset, 0, pdfWidth, pdfHeight);
+      var filename = (state.studentId || '학번') + '_' + (state.studentName || '이름') + '_카드뉴스.pdf';
+      doc.save(filename);
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    }).catch(function(){
+      sheet.classList.remove('capturing');
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+      alert('PDF 생성 중 문제가 발생했습니다. 다시 시도해주세요.');
+    });
+  });
+
+  // ---------- navigation ----------
+  var stages = document.querySelectorAll('.stage');
+  var stepItems = document.querySelectorAll('.step-item');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+
+  function applyStep(i){
+    current = i;
+    stages.forEach(function(s){ s.classList.toggle('active', +s.dataset.step === current); });
+    stepItems.forEach(function(item, idx){
+      item.classList.toggle('active', idx===current);
+      item.classList.toggle('done', idx<current);
+    });
+    prevBtn.style.visibility = current===0 ? 'hidden' : 'visible';
+    nextBtn.textContent = current===TOTAL_STEPS-1 ? '완료' : '다음';
+    nextBtn.style.display = current===TOTAL_STEPS-1 ? 'none' : 'inline-block';
+    if(STEP_PAGE_MAP[current]) renderPageRecap(STEP_PAGE_MAP[current]);
+    if(current===7) renderSubmitSummary();
+    window.scrollTo(0, 0);
+  }
+
+  function goTo(i){
+    if(i<0) i=0;
+    if(i>TOTAL_STEPS-1) i=TOTAL_STEPS-1;
+    var leavingKey = STEP_PAGE_MAP[current];
+    if(leavingKey){
+      captureCanvas(leavingKey).then(function(){ applyStep(i); });
+    } else {
+      applyStep(i);
+    }
+  }
+
+  nextBtn.addEventListener('click', function(){ goTo(current+1); });
+  prevBtn.addEventListener('click', function(){ goTo(current-1); });
+  stepItems.forEach(function(item, idx){ item.addEventListener('click', function(){ goTo(idx); }); });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key !== 'Delete' && e.key !== 'Backspace') return;
+    var ae = document.activeElement;
+    if(ae && (ae.tagName==='INPUT' || ae.tagName==='TEXTAREA' || ae.isContentEditable)) return;
+    var key = STEP_PAGE_MAP[current];
+    if(key && selectedElement[key]){
+      deleteElement(key, selectedElement[key]);
+      e.preventDefault();
+    }
+  });
+
+  document.getElementById('clearAllBtn').addEventListener('click', function(){
+    if(!confirm('저장된 모든 입력 내용(학번·이름·스토리보드·카드뉴스)이 지워지고 새로 시작합니다. 계속할까요?')) return;
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+    location.reload();
+  });
+
+  // ---------- init ----------
+  loadState();
+  document.getElementById('studentId').value = state.studentId;
+  document.getElementById('studentName').value = state.studentName;
+  document.getElementById('conflictTopic').value = state.conflictTopic;
+  reflectionEl.value = state.reflection;
+  renderReflectionCounter();
+  Array.prototype.forEach.call(sbContainer.querySelectorAll('input,textarea'), function(el){
+    el.value = state[el.dataset.page][el.dataset.field];
+  });
+  if(orgCustomInput){ orgCustomInput.value = state.orgCustom; }
+  renderOrgSelection();
+  PAGES.forEach(function(page){
+    document.getElementById('bg-'+page.key).value = state[page.key].canvas.bg;
+    renderCanvasElements(page.key);
+  });
+  applyStep(0);
+})();
+</script>
+</body>
+</html>
